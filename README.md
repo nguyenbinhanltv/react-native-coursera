@@ -1,1 +1,1 @@
-# react-native-coursera
+# react-native-coursera: http://blog.tdk.best/react-native
