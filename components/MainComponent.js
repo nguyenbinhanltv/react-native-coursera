@@ -7,6 +7,13 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerI
 import Menu from './MenuComponent';
 import Dishdetail from './DishdetailComponent';
 
+// redux
+import { connect } from 'react-redux';
+import { fetchLeaders } from '../redux/ActionCreators';
+const mapDispatchToProps = dispatch => ({
+    fetchLeaders: () => dispatch(fetchLeaders())
+});
+
 import Home from './HomeComponent';
 const HomeNavigator = createStackNavigator();
 function HomeNavigatorScreen() {
@@ -131,6 +138,12 @@ function MainNavigatorScreen() {
 }
 
 class Main extends Component {
+
+    componentDidMount() {
+        // redux
+        this.props.fetchLeaders();
+    }
+
     render() {
         return (
             <NavigationContainer>
@@ -139,4 +152,4 @@ class Main extends Component {
         );
     }
 }
-export default Main;
+export default connect(null, mapDispatchToProps)(Main);
