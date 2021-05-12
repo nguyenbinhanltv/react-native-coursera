@@ -31,7 +31,7 @@ class RenderLeadership extends Component {
             <Card>
                 <Card.Title>Corporate Leadership</Card.Title>
                 <Card.Divider />
-                <FlatList data={this.props.items}
+                <FlatList data={this.props.leaders}
                     renderItem={({ item, index }) => this.renderLeaderItem(item, index)}
                     keyExtractor={item => item.id.toString()} />
             </Card>
