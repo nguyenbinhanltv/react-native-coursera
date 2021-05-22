@@ -13,16 +13,20 @@ import Menu from "./MenuComponent";
 import Dishdetail from "./DishdetailComponent";
 
 // redux
+import { baseUrl } from "../shared/baseUrl";
+// redux
 import { connect } from "react-redux";
 import {
   fetchLeaders,
   fetchDishes,
   fetchComments,
+  fetchPromos,
 } from "../redux/ActionCreators";
 const mapDispatchToProps = (dispatch) => ({
   fetchLeaders: () => dispatch(fetchLeaders()),
   fetchDishes: () => dispatch(fetchDishes()),
   fetchComments: () => dispatch(fetchComments()),
+  fetchPromos: () => dispatch(fetchPromos()),
 });
 
 import Home from "./HomeComponent";
@@ -167,7 +171,7 @@ function CustomDrawerContent(props) {
       >
         <View style={{ flex: 1 }}>
           <Image
-            source={require("./images/logo.png")}
+            source={{ uri: baseUrl + "images/logo.png" }}
             style={{ margin: 10, width: 80, height: 60 }}
           />
         </View>
@@ -253,6 +257,7 @@ class Main extends Component {
     this.props.fetchLeaders();
     this.props.fetchDishes();
     this.props.fetchComments();
+    this.props.fetchPromos();
   }
 
   render() {
