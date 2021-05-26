@@ -29,6 +29,38 @@ const mapDispatchToProps = (dispatch) => ({
   fetchPromos: () => dispatch(fetchPromos()),
 });
 
+import Reservation from "./ReservationComponent";
+
+function ReservationNavigatorScreen() {
+  const ReservationNavigator = createStackNavigator();
+  return (
+    <ReservationNavigator.Navigator
+      initialRouteName="Reservation"
+      screenOptions={{
+        headerStyle: { backgroundColor: "#7cc" },
+        headerTintColor: "#fff",
+        headerTitleStyle: { color: "#fff" },
+      }}
+    >
+      <ReservationNavigator.Screen
+        name="Reservation"
+        component={Reservation}
+        options={({ navigation }) => ({
+          headerTitle: "Reserve Table",
+          headerLeft: () => (
+            <Icon
+              name="menu"
+              size={36}
+              color="#fff"
+              onPress={() => navigation.toggleDrawer()}
+            />
+          ),
+        })}
+      />
+    </ReservationNavigator.Navigator>
+  );
+}
+
 import Home from "./HomeComponent";
 const HomeNavigator = createStackNavigator();
 function HomeNavigatorScreen() {
@@ -241,6 +273,22 @@ function MainNavigatorScreen() {
           drawerIcon: ({ focused, size }) => (
             <Icon
               name="contacts"
+              size={size}
+              color={focused ? "#7cc" : "#ccc"}
+            />
+          ),
+        }}
+      />
+      <MainNavigator.Screen
+        name="Reservation"
+        component={ReservationNavigatorScreen}
+        options={{
+          headerShown: false,
+          title: "Reserve Table",
+          drawerIcon: ({ focused, size }) => (
+            <Icon
+              name="cutlery"
+              type="font-awesome"
               size={size}
               color={focused ? "#7cc" : "#ccc"}
             />
