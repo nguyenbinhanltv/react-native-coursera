@@ -1,6 +1,7 @@
 // redux
 import { connect } from "react-redux";
 import { postFavorite, postComment } from "../redux/ActionCreators";
+import * as Animatable from "react-native-animatable";
 const mapStateToProps = (state) => {
   return {
     dishes: state.dishes,
@@ -23,16 +24,67 @@ import {
   YellowBox,
   Modal,
   Button,
+  PanResponder,
+  Alert,
+  Dimensions,
 } from "react-native";
-import { Card, Image, Icon, Rating, Input } from "react-native-elements";
+import { Card, Image, Icon, Input } from "react-native-elements";
+import { Rating } from "react-native-ratings";
 import { baseUrl } from "../shared/baseUrl";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 class RenderDish extends Component {
   render() {
     const dish = this.props.dish;
+    // gesture
+    const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+      if (dx < -200) return true; // right to left
+      return false;
+    };
+    const recognizeDrag1 = ({ moveX, moveY, dx, dy }) => {
+      if (dx > 200) return true; // right to left
+      return false;
+    };
+    const panResponder = PanResponder.create({
+      onStartShouldSetPanResponder: (e, gestureState) => {
+        return true;
+      },
+      onPanResponderEnd: (e, gestureState) => {
+        if (recognizeDrag(gestureState)) {
+          Alert.alert(
+            "Add Favorite",
+            "Are you sure you wish to add " + dish.name + " to favorite?",
+            [
+              {
+                text: "Cancel",
+                onPress: () => {
+                  /* nothing */
+                },
+              },
+              {
+                text: "OK",
+                onPress: () => {
+                  this.props.favorite
+                    ? alert("Already favorite")
+                    : this.props.onPressFavorite();
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        }
+
+        if (recognizeDrag1(gestureState)) {
+          this.props.onPressComment();
+        }
+        return true;
+      },
+    });
     if (dish != null) {
       return (
-        <Card>
+        <Card {...panResponder.panHandlers}>
           <Image
             source={{ uri: baseUrl + dish.image }}
             style={{
@@ -124,17 +176,21 @@ class Dishdetail extends Component {
     const dishId = parseInt(this.props.route.params.dishId);
     return (
       <ScrollView>
-        <RenderDish
-          dish={this.props.dishes.dishes[dishId]}
-          favorite={this.props.favorites.some((el) => el === dishId)}
-          onPressFavorite={() => this.markFavorite(dishId)}
-          onPressComment={() => this.setState({ showModal: true })}
-        />
-        <RenderComments
-          comments={this.props.comments.comments.filter(
-            (comment) => comment.dishId === dishId
-          )}
-        />
+        <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+          <RenderDish
+            dish={this.props.dishes.dishes[dishId]}
+            favorite={this.props.favorites.some((el) => el === dishId)}
+            onPressFavorite={() => this.markFavorite(dishId)}
+            onPressComment={() => this.setState({ showModal: true })}
+          />
+        </Animatable.View>
+        <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
+          <RenderComments
+            comments={this.props.comments.comments.filter(
+              (comment) => comment.dishId === dishId
+            )}
+          />
+        </Animatable.View>
         <Modal
           visible={this.state.showModal}
           onRequestClose={() => this.setState({ showModal: false })}
@@ -143,7 +199,9 @@ class Dishdetail extends Component {
             <Rating
               startingValue={this.state.rating}
               showRating={true}
-              onFinishRating={(value) => this.setState({ rating: value })}
+              onFinishRating={(value) => {
+                this.setState({ rating: value });
+              }}
             />
             <View style={{ height: 20 }} />
             <Input
